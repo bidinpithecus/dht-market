@@ -1,0 +1,7 @@
+- Gerar baldo de baldos
+- Faz função (modulo) pra separar o baldo em chunks
+- Cria rede de pikas
+  - Onde pikas5 é a inicial
+- Popula a dht com algo como `python set.py pikas5 8468 <baldos> <chunk>`
+- Exemplifica o uso com busca de <baldos> para receber a <loja>
+- Logga as buscas para identificar possiveis clientes frequentes de tal loja pra atualizar a dht 
