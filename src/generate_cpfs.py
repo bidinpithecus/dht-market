@@ -1,4 +1,9 @@
 import random
+from envparse import Env
+
+env = Env()
+env.read_envfile()
+USERS = env.int("USERS", default = 10000000)
 
 def calcular_dv(cpf_base):
     def calcular_primeiro_dv(cpf_base):
@@ -32,16 +37,12 @@ def gerar_cpfs(quantidade):
     return cpfs
 
 def salvar_cpfs(cpfs, filename="db/cpfs.txt"):
-    """
-    Salva a lista de CPFs gerados em um arquivo de texto.
-    """
     with open(filename, "w+") as f:
         for cpf in cpfs:
             f.write(cpf + "\n")
         f.close()
 
-quantidade = 10
-cpfs = gerar_cpfs(quantidade)
+cpfs = gerar_cpfs(USERS)
 
 salvar_cpfs(cpfs)
-print(f"{quantidade} CPFs válidos foram gerados e salvos em 'cpfs.txt'.")
+print(f"{USERS} CPFs válidos foram gerados e salvos em 'cpfs.txt'.")

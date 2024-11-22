@@ -14,8 +14,7 @@ server = Server()
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Kademlia Node Operations")
-    
-    # Node type argument (required)
+
     parser.add_argument(
         "-t", "--type", 
         choices=['n', 'c'], 
@@ -23,7 +22,6 @@ def parse_arguments():
         help="'n' creates a new node, 'c' connects to an existing node."
     )
     
-    # Port argument (always needed)
     parser.add_argument(
         "-p", "--port", 
         required=True, 
@@ -31,14 +29,12 @@ def parse_arguments():
         help="Port number for the local node (for listening)."
     )
     
-    # IP argument (only needed when connecting to a node)
     parser.add_argument(
         "-i", "--ip", 
         type=str, 
         help="IP address of the bootstrap node (required for 'c')."
     )
     
-    # Remote port argument (only needed when connecting to a node)
     parser.add_argument(
         "-r", "--remote-port", 
         type=int, 
@@ -131,7 +127,6 @@ def main():
     args = parse_arguments()
 
     if args.type == 'n':
-        # Creating a new bootstrap node
         if args.ip or args.remote_port:
             raise argparse.ArgumentTypeError("'--ip' and '--remote-port' should not be provided for creating a new node.")
         # loop = asyncio.get_event_loop()
@@ -146,7 +141,6 @@ def main():
         old_create_bootstrap_node(args.port)
 
     elif args.type == 'c':
-        # Connecting to an existing node
         if not args.ip or not args.remote_port:
             raise argparse.ArgumentTypeError("'--ip' and '--remote-port' are required for connecting to a node.")
         connect_to_bootstrap_node(args.ip, args.remote_port, args.port)

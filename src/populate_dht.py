@@ -7,12 +7,11 @@ server = Server()
 
 env = Env()
 env.read_envfile()
-CHUNKS = env.int("CHUNKS", default = 64)
+LOJAS = env.int("LOJAS", default = 64)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description="Populate dht")
 
-    # Port argument (always needed)
     parser.add_argument(
         "-p", "--port", 
         required=True, 
@@ -20,14 +19,12 @@ def parse_arguments():
         help="Port number for the local node (for listening)."
     )
 
-    # IP argument (only needed when connecting to a node)
     parser.add_argument(
         "-i", "--ip", 
         type=str, 
         help="IP address of the bootstrap node."
     )
 
-    # Remote port argument (only needed when connecting to a node)
     parser.add_argument(
         "-r", "--remote-port", 
         type=int, 
@@ -46,14 +43,14 @@ async def connect_to_bootstrap_node(ip: str, remote_port: int, local_port: int):
     server.stop()
 
 async def populate():
-    for chunk in range(CHUNKS):
-        print(f"Chunk {chunk} started.")
-        with open("db/chunk" + str(chunk) + ".txt", "r") as c:
+    for chunk in range(LOJAS):
+        with open("db/chunk" + str(chunk + 1) + ".txt", "r") as c:
             cpfs = c.readlines()
             for cpf in cpfs:
-                await server.set(cpf,chunk)
+                cpf = cpf.strip()
+                await server.set(cpf,chunk + 1)
             c.close()
-        print(f"Chunk {chunk} finichad.")
+    print(f"DHT populada.")
 
 async def main():
     args = parse_arguments()
