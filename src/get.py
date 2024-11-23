@@ -41,8 +41,15 @@ async def run(ip, remote_port, local_port, key):
     bootstrap_node = (ip, remote_port)
     await server.bootstrap([bootstrap_node])
 
-    result = await server.get(key)
-    print("Get result:", result)
+    try:
+        result = await server.get(key)
+        if result == None:
+            print(f"Unknown key {key}")
+        else:
+            print("Get result:", result)
+    except Exception as e:
+        print("Error retrieving the key:", e)
+
     server.stop()
 
 async def main():

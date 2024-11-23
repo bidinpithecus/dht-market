@@ -1,9 +1,14 @@
 import random
+import os
 from envparse import Env
+from multiprocessing import Pool
+from tqdm import tqdm
 
 env = Env()
 env.read_envfile()
-USERS = env.int("USERS", default = 10000000)
+USERS = env.int("USERS", default=10000000)
+
+os.makedirs("db", exist_ok=True)
 
 def calcular_dv(cpf_base):
     def calcular_primeiro_dv(cpf_base):
@@ -25,24 +30,25 @@ def calcular_dv(cpf_base):
     segundo_dv = calcular_segundo_dv(cpf_base, primeiro_dv)
     return str(primeiro_dv) + str(segundo_dv)
 
-def gerar_cpf():
+def gerar_cpf(_):
     cpf_base = ''.join([str(random.randint(0, 9)) for _ in range(9)])
     dv = calcular_dv(cpf_base)
     return cpf_base + dv
 
 def gerar_cpfs(quantidade):
-    cpfs = set()
-    while len(cpfs) < quantidade:
-        cpfs.add(gerar_cpf())
+    with Pool() as pool:
+        with tqdm(total=quantidade, desc="Gerando CPFs válidos") as pbar:
+            cpfs = set()
+            for cpf in pool.imap_unordered(gerar_cpf, range(quantidade)):
+                cpfs.add(cpf)
+                pbar.update(1)
     return cpfs
 
 def salvar_cpfs(cpfs, filename="db/cpfs.txt"):
     with open(filename, "w+") as f:
         for cpf in cpfs:
             f.write(cpf + "\n")
-        f.close()
 
 cpfs = gerar_cpfs(USERS)
-
 salvar_cpfs(cpfs)
-print(f"{USERS} CPFs válidos foram gerados e salvos em 'cpfs.txt'.")
+print(f"{USERS} CPFs válidos foram gerados e salvos em 'db/cpfs.txt'.")

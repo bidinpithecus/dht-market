@@ -1,2 +1,4 @@
 kademlia
 envparse
+tqdm
+multiprocessing
